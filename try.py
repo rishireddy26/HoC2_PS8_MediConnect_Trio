@@ -1,9 +1,13 @@
 import streamlit as st
+import pandas as pd
+import ollama
 import os
 from streamlit_webrtc import webrtc_streamer
 
 # Set up the page
 st.set_page_config(page_title="Remote Healthcare Platform", layout="wide")
+
+
 
 # User authentication (Basic session handling)
 if "authenticated" not in st.session_state:
@@ -32,12 +36,21 @@ if choice == "Home":
     st.write("Providing medical access to remote areas with low-bandwidth features.")
     st.image("image.jpeg", use_container_width=True)
 
-# Symptom Checker Page
+# Symptom Checker Page with AI Diagnosis
 elif choice == "Symptom Checker":
-    st.header("AI-Powered Symptom Checker")
-    symptoms = st.text_area("Enter your symptoms:")
-    if st.button("Check Severity"):
-        st.success("Severity: Moderate. Suggested Action: Consult a doctor.")
+    st.header("🩺 AI-Powered Symptom Checker")
+    symptoms = st.text_area("Enter your symptoms (comma-separated):")
+
+    if st.button("🔍 Check Diagnosis"):
+        if not symptoms.strip():
+            st.warning("⚠️ Please enter symptoms before checking.")
+        else:
+            # Query the trained model
+            prompt = f"Symptoms: {symptoms}. What is the disease and treatment?"
+            response = ollama.chat(model="mistral", messages=[{"role": "user", "content": prompt}])
+
+            # Display Results
+            st.success(f"**Diagnosis & Treatment:**\n{response['message']['content']}")
 
 # Telemedicine Page
 elif choice == "Telemedicine":

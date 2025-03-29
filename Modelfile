@@ -1,0 +1,12 @@
+FROM mistral:7b-instruct-v0.2-q4_0
+
+PARAMETER temperature 0.7
+PARAMETER num_ctx 2048
+PARAMETER stop "Human:"
+
+SYSTEM "You are a medical diagnosis assistant trained to identify diseases based on symptoms."
+
+TEMPLATE """
+Human: {{.input}}
+Assistant: {{.response}}
+"""
